@@ -48,10 +48,10 @@ def handle_location(event):
         json.dumps({
           "user_id": 258,
           "amount": 1,
-            "location_lat_south": lat - 0.25,
-            "location_lat_north": lat + 0.25,
-            "location_lng_west": lon - 0.25,
-            "location_lng_east": lon + 0.25
+            "location_lat_south": lat - 0.1,
+            "location_lat_north": lat + 0.1,
+            "location_lng_west": lon - 0.1,
+            "location_lng_east": lon + 0.1
             }),
         headers={'Content-Type': 'application/json'})
     for panel in response.json()['posts']:
@@ -62,7 +62,7 @@ def handle_location(event):
                 photo_url = post['photo_url']
                 user_name = post['user_name']
                 text_message = TextSendMessage(
-                    text="{}\n{}\n{}".format(user_name, title, comment)
+                    text="投稿者：{}\nタイトル：{}\nコメント：{}".format(user_name, title, comment)
                 )
                 image_message = ImageSendMessage(
                     original_content_url=f"https://psf-ikoma-burasampo-datastore.s3-ap-northeast-1.amazonaws.com/public/posts/photos/original/{photo_url}",
