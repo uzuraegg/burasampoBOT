@@ -57,14 +57,19 @@ def handle_location(event):
     for panel in response.json()['posts']:
         for post in panel:
             if('photo_url' in post):
+                title = post['title']
+                comment = post['comment']
                 photo_url = post['photo_url']
-                # 画像の送信
+                user_name = post['user_name']
+                text_message = TextSendMessage(
+                    text="{}\n{}\n{}".format(user_name, title, comment)
+                )
                 image_message = ImageSendMessage(
                     original_content_url=f"https://psf-ikoma-burasampo-datastore.s3-ap-northeast-1.amazonaws.com/public/posts/photos/original/{photo_url}",
                     preview_image_url=f"https://psf-ikoma-burasampo-datastore.s3-ap-northeast-1.amazonaws.com/public/posts/photos/thumbnail/{photo_url}",
                 )
 
-                line_bot_api.reply_message(event.reply_token, image_message)
+                line_bot_api.reply_message(event.reply_token, [text_message,image_message])
                 return
     line_bot_api.reply_message(event.reply_token, TextSendMessage(text='投稿は見つかりませんでした'))
 
