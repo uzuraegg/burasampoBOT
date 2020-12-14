@@ -1,4 +1,5 @@
 from flask import Flask, request, abort
+import requests, json
 import os
 from linebot import (
    LineBotApi, WebhookHandler
@@ -8,7 +9,7 @@ from linebot.exceptions import (
 )
 from linebot.models import (
    MessageEvent, TextMessage, TextSendMessage, FollowEvent,
-   ImageMessage, AudioMessage,
+   ImageMessage, LocationMessage,
 )
 
 app = Flask(__name__)
@@ -33,18 +34,36 @@ def callback():
    except InvalidSignatureError:
        abort(400)
    return 'OK'
- #オウム返しプログラム 
-@handler.add(MessageEvent, message=TextMessage)
-def handle_message(event):
-   line_bot_api.reply_message(
-       event.reply_token,
-       TextSendMessage(text=event.message.text))
- #友達追加時イベント 
+ #返信プログラム
+@handler.add(MessageEvent, message=LocationMessage)
+def handle_location(event):
+    lat = event.message.latitude
+    lon = event.message.longitude
+
+    # timelineAPIから投稿を取得
+    response = requests.post(
+        'https://api.ikoma.burasampo.jp/map/search/',
+        json.dumps({
+          "user_id": 258,
+          "amount": 1,
+            "location_lat_south": lat + 0.25,
+            "location_lat_north": lat - 0.25,
+            "location_lng_west": lon + 0.25,
+            "location_lng_east": lon - 0.25
+            }),
+        headers={'Content-Type': 'application/json'})
+
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=response.json()))
+
+
+#友達追加時イベント
 @handler.add(FollowEvent)
 def handle_follow(event):
    line_bot_api.reply_message(
        event.reply_token,
-       TextSendMessage(text='友達追加ありがとう'))
+       TextSendMessage(text='友達追加ありがとう！'))
 
 
 if __name__ == "__main__":
