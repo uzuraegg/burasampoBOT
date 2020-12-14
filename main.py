@@ -46,10 +46,10 @@ def handle_location(event):
         json.dumps({
           "user_id": 258,
           "amount": 1,
-            "location_lat_south": lat - 0.25,
-            "location_lat_north": lat + 0.25,
-            "location_lng_west": lon - 0.25,
-            "location_lng_east": lon + 0.25
+            "location_lat_south": lat - 0.15,
+            "location_lat_north": lat + 0.15,
+            "location_lng_west": lon - 0.15,
+            "location_lng_east": lon + 0.15
             }),
         headers={'Content-Type': 'application/json'})
 
