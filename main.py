@@ -9,7 +9,7 @@ from linebot.exceptions import (
 )
 from linebot.models import (
    MessageEvent, TextMessage, TextSendMessage, FollowEvent,
-   ImageMessage, LocationMessage,
+   ImageSendMessage, LocationMessage,
 )
 
 app = Flask(__name__)
@@ -37,6 +37,8 @@ def callback():
  #返信プログラム
 @handler.add(MessageEvent, message=LocationMessage)
 def handle_location(event):
+    PHOTO_URL_BASE = "https://psf-ikoma-burasampo-datastore.s3-ap-northeast-1.amazonaws.com/public/posts/photos";
+
     lat = event.message.latitude
     lon = event.message.longitude
 
@@ -46,16 +48,27 @@ def handle_location(event):
         json.dumps({
           "user_id": 258,
           "amount": 1,
-            "location_lat_south": lat - 0.15,
-            "location_lat_north": lat + 0.15,
-            "location_lng_west": lon - 0.15,
-            "location_lng_east": lon + 0.15
+            "location_lat_south": lat - 0.25,
+            "location_lat_north": lat + 0.25,
+            "location_lng_west": lon - 0.25,
+            "location_lng_east": lon + 0.25
             }),
         headers={'Content-Type': 'application/json'})
+    for panel in response['posts']:
+        for post in panel:
+            if('photo_url' in post):
+                photo_url = post['photo_url']
+                # 画像の送信
+                image_message = ImageSendMessage(
+                    original_content_url=f"https://psf-ikoma-burasampo-datastore.s3-ap-northeast-1.amazonaws.com/public/posts/photos/original/{photo_url}",
+                    preview_image_url=f"https://psf-ikoma-burasampo-datastore.s3-ap-northeast-1.amazonaws.com/public/posts/photos/thumbnail/{photo_url}",
+                )
 
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=response.text[0:4000]))
+                line_bot_api.reply_message(event.reply_token, image_message)
+                return
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text='投稿は見つかりませんでした'))
+
+
 
 
 #友達追加時イベント
