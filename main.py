@@ -16,7 +16,7 @@ app = Flask(__name__)
  #環境変数取得 
 YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
 YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
- #APIの設定 
+ #APIの設定
 line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(YOUR_CHANNEL_SECRET)
  #テスト用 
@@ -54,7 +54,7 @@ def handle_location(event):
             "location_lng_east": lon + 0.25
             }),
         headers={'Content-Type': 'application/json'})
-    for panel in response['posts']:
+    for panel in response.json()['posts']:
         for post in panel:
             if('photo_url' in post):
                 photo_url = post['photo_url']
