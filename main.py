@@ -48,10 +48,10 @@ def handle_location(event):
         json.dumps({
           "user_id": 258,
           "amount": 1,
-            "location_lat_south": lat - 0.1,
-            "location_lat_north": lat + 0.1,
-            "location_lng_west": lon - 0.1,
-            "location_lng_east": lon + 0.1
+            "location_lat_south": lat - 0.01,
+            "location_lat_north": lat + 0.01,
+            "location_lng_west": lon - 0.01,
+            "location_lng_east": lon + 0.01
             }),
         headers={'Content-Type': 'application/json'})
     for panel in response.json()['posts']:
