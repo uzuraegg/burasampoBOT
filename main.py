@@ -55,7 +55,7 @@ def handle_location(event):
 
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=response.text))
+        TextSendMessage(text=response.text[0:30]))
 
 
 #友達追加時イベント
