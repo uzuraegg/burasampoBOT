@@ -41,7 +41,7 @@ def handle_location(event):
     SEARCH_DISTANCE = 0.01
 
     user_lat = event.message.latitude
-    user_lon = event.message.longitude
+    user_lng = event.message.longitude
 
     # timelineAPIから投稿を取得
     response = requests.post(
@@ -51,8 +51,8 @@ def handle_location(event):
           "amount": 1,
             "location_lat_south": user_lat - SEARCH_DISTANCE,
             "location_lat_north": user_lat + SEARCH_DISTANCE,
-            "location_lng_west": user_lon - SEARCH_DISTANCE,
-            "location_lng_east": user_lon + SEARCH_DISTANCE
+            "location_lng_west": user_lng - SEARCH_DISTANCE,
+            "location_lng_east": user_lng + SEARCH_DISTANCE
             }),
         headers={'Content-Type': 'application/json'})
     for panel in response.json()['posts']:
@@ -63,7 +63,7 @@ def handle_location(event):
                 photo_url = post['photo_url']
                 user_name = post['user_name']
                 location_lat = post['location_lat']
-                location_lon = post['location_lon']
+                location_lng = post['location_lng']
 
                 text_message = TextSendMessage(
                     text="投稿者：{}\nタイトル：{}\nコメント：{}".format(user_name, title, comment)
