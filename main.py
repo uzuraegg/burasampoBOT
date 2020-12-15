@@ -9,7 +9,7 @@ from linebot.exceptions import (
 )
 from linebot.models import (
    MessageEvent, TextMessage, TextSendMessage, FollowEvent,
-   ImageSendMessage, LocationMessage,
+   ImageSendMessage, LocationSendMessage
 )
 
 app = Flask(__name__)
@@ -39,8 +39,8 @@ def callback():
 def handle_location(event):
     PHOTO_URL_BASE = "https://psf-ikoma-burasampo-datastore.s3-ap-northeast-1.amazonaws.com/public/posts/photos";
 
-    lat = event.message.latitude
-    lon = event.message.longitude
+    user_lat = event.message.latitude
+    user_lon = event.message.longitude
 
     # timelineAPIから投稿を取得
     response = requests.post(
@@ -48,10 +48,10 @@ def handle_location(event):
         json.dumps({
           "user_id": 258,
           "amount": 1,
-            "location_lat_south": lat - 0.01,
-            "location_lat_north": lat + 0.01,
-            "location_lng_west": lon - 0.01,
-            "location_lng_east": lon + 0.01
+            "location_lat_south": user_lat - 0.01,
+            "location_lat_north": user_lat + 0.01,
+            "location_lng_west": user_lon - 0.01,
+            "location_lng_east": user_lon + 0.01
             }),
         headers={'Content-Type': 'application/json'})
     for panel in response.json()['posts']:
@@ -61,6 +61,9 @@ def handle_location(event):
                 comment = post['comment']
                 photo_url = post['photo_url']
                 user_name = post['user_name']
+                location_lat = post['location_lat']
+                location_lon = post['location_lon']
+
                 text_message = TextSendMessage(
                     text="投稿者：{}\nタイトル：{}\nコメント：{}".format(user_name, title, comment)
                 )
@@ -68,8 +71,14 @@ def handle_location(event):
                     original_content_url=f"https://psf-ikoma-burasampo-datastore.s3-ap-northeast-1.amazonaws.com/public/posts/photos/original/{photo_url}",
                     preview_image_url=f"https://psf-ikoma-burasampo-datastore.s3-ap-northeast-1.amazonaws.com/public/posts/photos/thumbnail/{photo_url}",
                 )
+                location_message = LocationSendMessage(
+                    title="",
+                    address="",
+                    latitude=location_lat,
+                    longitude=location_lon
+                )
 
-                line_bot_api.reply_message(event.reply_token, [text_message,image_message])
+                line_bot_api.reply_message(event.reply_token, [text_message,image_message,location_message])
                 return
     line_bot_api.reply_message(event.reply_token, TextSendMessage(text='投稿は見つかりませんでした'))
 
