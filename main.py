@@ -9,7 +9,7 @@ from linebot.exceptions import (
 )
 from linebot.models import (
    MessageEvent, TextMessage, TextSendMessage, FollowEvent,
-   ImageSendMessage, LocationSendMessage
+   ImageSendMessage, LocationSendMessage, LocationMessage
 )
 
 app = Flask(__name__)
@@ -38,6 +38,7 @@ def callback():
 @handler.add(MessageEvent, message=LocationMessage)
 def handle_location(event):
     PHOTO_URL_BASE = "https://psf-ikoma-burasampo-datastore.s3-ap-northeast-1.amazonaws.com/public/posts/photos";
+    SEARCH_DISTANCE = 0.01
 
     user_lat = event.message.latitude
     user_lon = event.message.longitude
@@ -48,10 +49,10 @@ def handle_location(event):
         json.dumps({
           "user_id": 258,
           "amount": 1,
-            "location_lat_south": user_lat - 0.01,
-            "location_lat_north": user_lat + 0.01,
-            "location_lng_west": user_lon - 0.01,
-            "location_lng_east": user_lon + 0.01
+            "location_lat_south": user_lat - SEARCH_DISTANCE,
+            "location_lat_north": user_lat + SEARCH_DISTANCE,
+            "location_lng_west": user_lon - SEARCH_DISTANCE,
+            "location_lng_east": user_lon + SEARCH_DISTANCE
             }),
         headers={'Content-Type': 'application/json'})
     for panel in response.json()['posts']:
