@@ -72,14 +72,8 @@ def handle_location(event):
                     original_content_url=f"https://psf-ikoma-burasampo-datastore.s3-ap-northeast-1.amazonaws.com/public/posts/photos/original/{photo_url}",
                     preview_image_url=f"https://psf-ikoma-burasampo-datastore.s3-ap-northeast-1.amazonaws.com/public/posts/photos/thumbnail/{photo_url}",
                 )
-                location_message = LocationSendMessage(
-                    title="",
-                    address="",
-                    latitude=location_lat,
-                    longitude=location_lon
-                )
 
-                line_bot_api.reply_message(event.reply_token, [text_message,image_message,location_message])
+                line_bot_api.reply_message(event.reply_token, [text_message,image_message])
                 return
     line_bot_api.reply_message(event.reply_token, TextSendMessage(text='投稿は見つかりませんでした'))
 
