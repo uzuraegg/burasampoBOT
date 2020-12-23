@@ -37,7 +37,7 @@ def callback():
  #返信プログラム
 @handler.add(MessageEvent, message=LocationMessage)
 def handle_location(event):
-    PHOTO_URL_BASE = "https://psf-ikoma-burasampo-datastore.s3-ap-northeast-1.amazonaws.com/public/posts/photos";
+    PHOTO_URL_BASE = "https://psf-ikoma-burasampo-datastore.s3-ap-northeast-1.amazonaws.com/public/posts/photos"
     SEARCH_DISTANCE = 0.01
 
     user_lat = event.message.latitude
@@ -62,8 +62,6 @@ def handle_location(event):
                 comment = post['comment']
                 photo_url = post['photo_url']
                 user_name = post['user_name']
-                location_lat = post['location_lat']
-                location_lng = post['location_lng']
 
                 text_message = TextSendMessage(
                     text="投稿者：{}\nタイトル：{}\nコメント：{}".format(user_name, title, comment)
